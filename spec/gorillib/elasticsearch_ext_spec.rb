@@ -13,7 +13,7 @@ describe Gorillib::Model do
       subject.class_eval do
         field :foo, String, es_options: { analyzer: 'whitespace' }
       end
-      subject.to_mapping.should eq({ properties: { foo: { type: 'string', index: 'not_analyzed', analyzer: 'whitespace' } } })
+      subject.to_mapping.should eq({ properties: { foo: { type: 'string', index: 'not_analyzed', analyzer: 'whitespace', omit_norms: true, index_options: 'docs' } } })
     end
 
     it 'generates integer mappings correctly' do
@@ -60,7 +60,7 @@ describe Gorillib::Model do
 
         field :bar, Bar      
       end
-      subject.to_mapping.should eq({ properties: { bar: { properties: { baz: { type: 'string', index: 'not_analyzed' } } } } })
+      subject.to_mapping.should eq({ properties: { bar: { properties: { baz: { type: 'string', index: 'not_analyzed', omit_norms: true, index_options: 'docs' } } } } })
     end
     
     it 'handles non-standard fields as strings' do
@@ -70,7 +70,7 @@ describe Gorillib::Model do
         end
         field :bar, Baz        
       end
-      subject.to_mapping.should eq({ properties: { bar: { type: 'string', index: 'not_analyzed' } } })
+      subject.to_mapping.should eq({ properties: { bar: { type: 'string', index: 'not_analyzed', omit_norms: true, index_options: 'docs' } } })
     end
   end
 end
