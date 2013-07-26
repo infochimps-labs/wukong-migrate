@@ -72,19 +72,23 @@ module Gorillib
     
     Field.class_eval do
       field :es_options, Hash
+
+      def congruent?(klass, *others)
+        others.any?{ |o| o.ancestors.include? klass }
+      end
       
       def receive_as_type(factory, params)
-        product = factory.try(:product)
+        products = Array[factory.try(:product) || factory].flatten
         case 
-        when product == Integer
+        when congruent?(Integer, *products)
           EsInteger.receive(params)
-        when product == Float
+        when congruent?(Float, *products)
           EsFloat.receive(params)
-        when product == Date
+        when congruent?(Date, *products) || congruent?(Time, *products)
           EsDate.receive(params)
-        when product == [TrueClass,  FalseClass]
+        when congruent?(TrueClass, *products) || congruent?(FalseClass, *products)
           EsBoolean.receive(params)
-        when product == Array
+        when congruent?(Array, *products)
           receive_as_type(factory.items_factory, params)
         else
           EsString.receive(params)
