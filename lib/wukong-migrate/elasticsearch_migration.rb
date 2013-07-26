@@ -38,6 +38,7 @@ class ObjectDsl < EsMigrationDsl
   magic :analyzer_field, String,   doc: 'Specify a field this document should use as an analyzer'
   magic :boost_field,    String,   doc: 'Specify a field this document should use as a boost'
   magic :parent,         String,   doc: 'Specify this documents _parent type'
+  magic :routing,        String,   doc: 'Specify a field this document should use to route'
   
   def mapping_rules
     {}.tap do |rules|
@@ -49,6 +50,7 @@ class ObjectDsl < EsMigrationDsl
       rules[:_analyzer]  = { path: analyzer_field        } if attribute_set?(:analyzer_field)
       rules[:_boost]     = { name: boost_field           } if attribute_set?(:boost_field)
       rules[:_parent]    = { type: parent                } if attribute_set?(:parent)
+      rules[:_routing]   = { path: routing               } if attribute_set?(:routing)
     end
   end
 
