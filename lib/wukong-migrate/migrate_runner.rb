@@ -6,7 +6,17 @@ module Wukong
       
       description <<-DESC.gsub(/^ {8}/, '').strip
         Use this tool to create and perform database migrations using models
-        defined in app/models.
+        defined in app/models. Options may be passed in as params on the commandline,
+        else are discovered using Wukong::Deploy.settings
+
+        $ wu-migrate generate schema_change --db=elasticsearch
+        # Creates a template Elasticsearch migration file in db/migrate/schema_change.rb
+ 
+        $ wu-migrate perform schema_change --db=elasticsearch
+        # Interprets and runs the migration db/migrate/schema_change.rb
+
+        $ wu-migrate all
+        # Runs all migrations found in db/migrate
 
         Commands:
 
