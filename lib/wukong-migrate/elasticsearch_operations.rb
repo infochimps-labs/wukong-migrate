@@ -59,11 +59,12 @@ class EsHttpOperation
   class AliasIndex < EsHttpOperation
     field :alias_name, String
     field :action,     Symbol
+    field :filter,     Hash
     
-    def path() '/_aliases?'                                                    ; end
-    def body() { actions: [{ action => { index: index, alias: alias_name } }]} ; end 
-    def verb() :post                                                           ; end
-    def info() "#{action.capitalize} alias :#{alias_name} for index #{index}"  ; end
+    def path() '/_aliases?'                                                                                  ; end
+    def body() { actions: [{ action => { index: index, alias: alias_name, filter: filter }.compact_blank }]} ; end 
+    def verb() :post                                                                                         ; end
+    def info() "#{action.capitalize} alias :#{alias_name} for index #{index}"                                ; end
   end
   
   class UpdateIndexMapping < EsHttpOperation
@@ -93,8 +94,8 @@ class EsHttpOperation
       UpdateIndexMapping.receive(index: index, obj_type: obj_type, mapping: mapping)
     end
     
-    def alias_index_op (action, index, als)
-      AliasIndex.receive(action: action, index: index, alias_name: als)
+    def alias_index_op (action, index, als, filter)
+      AliasIndex.receive({ action: action, index: index, alias_name: als, filter: filter }.compact_blank)
     end    
   end
 end

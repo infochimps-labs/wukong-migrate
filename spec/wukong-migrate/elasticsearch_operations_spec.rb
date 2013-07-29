@@ -52,14 +52,14 @@ describe 'EsHttpOperation' do
   end
 
   context EsHttpOperation::AliasIndex do
-    subject{ described_class.receive(index: 'foo', alias_name: 'bar', action: 'add') }
+    subject{ described_class.receive(index: 'foo', alias_name: 'bar', action: 'add', filter: { term: { foo: 'bar' }}) }
 
     its(:path) { should eq('/_aliases?')                                          }
-    its(:body) { should eq({ actions: [{ add: { index: 'foo', alias: 'bar' } }]}) }
+    its(:body) { should eq({ actions: [{ add: { index: 'foo', alias: 'bar', filter: { term: { foo: 'bar' } } } }]}) }
     its(:verb) { should eq(:post)                                                 }
     its(:info) { should eq('Add alias :bar for index foo')                        }
     its(:raw_curl_string) do
-      should eq("curl -X POST 'http://localhost:9200/_aliases?' -d '{\"actions\":[{\"add\":{\"index\":\"foo\",\"alias\":\"bar\"}}]}'")
+      should eq("curl -X POST 'http://localhost:9200/_aliases?' -d '{\"actions\":[{\"add\":{\"index\":\"foo\",\"alias\":\"bar\",\"filter\":{\"term\":{\"foo\":\"bar\"}}}}]}'")
     end
   end
 

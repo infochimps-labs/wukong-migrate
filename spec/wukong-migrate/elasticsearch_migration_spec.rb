@@ -36,13 +36,12 @@ describe EsMigration do
     it 'handles alias operations last' do
       m = subject.new do
         create_index(:foo) do
-          alias_to [:superfoo, :superbar]
+          alias_to :superfoo, filter: {}
         end
         delete_index(:bar)
       end.combined_operations.should eq([delete_index_op('bar'),
                                          create_index_op('foo', {}),
-                                         alias_index_op('add', 'foo', 'superfoo'),
-                                         alias_index_op('add', 'foo', 'superbar')])
+                                         alias_index_op('add', 'foo', 'superfoo', {})])
     end
     
     it 'handles mapping operations' do 

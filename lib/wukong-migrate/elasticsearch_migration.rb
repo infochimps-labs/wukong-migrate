@@ -65,11 +65,11 @@ end
 
 class IndexDsl < EsMigrationDsl
   # Dsl methods
-  collection :creations,    ObjectDsl, singular_name: 'create_mapping'
-  collection :updates,      ObjectDsl, singular_name: 'update_mapping'
-  collection :deletions,    ObjectDsl, singular_name: 'delete_mapping'
-  magic      :alias_to,     Array,     of: Symbol, default: []
-  magic      :remove_alias, Array,     of: Symbol, default: []
+  collection :creations,      ObjectDsl, singular_name: 'create_mapping'
+  collection :updates,        ObjectDsl, singular_name: 'update_mapping'
+  collection :deletions,      ObjectDsl, singular_name: 'delete_mapping'
+  collection :add_aliases,    Whatever,  singular_name: 'alias_to'
+  collection :remove_aliases, Whatever,  singular_name: 'remove_alias'
     
   # Additional index-level settings
   magic      :number_of_replicas, Integer
@@ -92,14 +92,12 @@ class IndexDsl < EsMigrationDsl
     obj
   end
 
-  def receive_alias_to params
-    params.each{ |als| operation_list << alias_index_op(:add, self.name, als) }
-    super(params)
+  def receive_alias_to(attrs, &block)
+    operation_list << alias_index_op(:add, self.name, attrs[:name], attrs[:filter])
   end
-
-  def receive_remove_alias params
-    params.each{ |als| operation_list << alias_index_op(:remove, self.name, als) }
-    super(params)
+  
+  def receive_remove_alias(attrs, &block)
+    operation_list << alias_index_op(:remove, self.name, attrs[:name], attrs[:filter])
   end
 
   def index_settings
