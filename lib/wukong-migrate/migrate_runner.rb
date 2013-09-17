@@ -70,6 +70,7 @@ module Wukong
       def perform_migration(*names, options)
         names.each do |name|
           migration = Wukong::Migration.retrieve(name)
+          die("Migration #{name} is not defined in #{migration_file_dir}", 1) if migration.nil?
           migration.write_attribute(:log, self.log)
           migration.perform(options)
         end
